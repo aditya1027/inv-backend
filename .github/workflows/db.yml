@@ -6,7 +6,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'backend/prisma/schema.prisma'
+      - 'prisma/schema.prisma'
   workflow_dispatch: # Run manually from Actions tab
 
 jobs:
@@ -20,7 +20,6 @@ jobs:
           node-version: '20'
 
       - name: Install and push schema
-        working-directory: backend
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
@@ -28,7 +27,6 @@ jobs:
           npx prisma db push
 
       - name: Seed (optional - creates default admin)
-        working-directory: backend
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: npm run db:seed
