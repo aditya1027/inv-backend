@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Use "sqlite" for local dev (DATABASE_URL="file:./dev.db")
+// Use "postgresql" for production (DATABASE_URL="postgresql://user:pass@host:5432/dbname")
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String  @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+}
+
+model Product {
+  id               String   @id @default(cuid())
+  name             String
+  sku              String?
+  barcode          String?  @unique
+  description      String?
+  unitPrice        Float    @map("unit_price")
+  quantityInStock  Int      @default(0) @map("quantity_in_stock")
+  category         String?
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+  saleItems        SaleItem[]
+}
+
+model Sale {
+  id          String     @id @default(cuid())
+  date        DateTime   @default(now())
+  totalAmount Float      @map("total_amount")
+  notes       String?
+  createdAt   DateTime   @default(now()) @map("created_at")
+  items       SaleItem[]
+}
+
+model SaleItem {
+  id        String  @id @default(cuid())
+  saleId    String  @map("sale_id")
+  productId String @map("product_id")
+  quantity  Int
+  unitPrice Float   @map("unit_price")
+  subtotal  Float
+  sale      Sale    @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id])
+  @@map("sale_items")
+}
