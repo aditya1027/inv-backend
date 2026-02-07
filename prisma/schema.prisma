@@ -2,11 +2,10 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// Use "sqlite" for local dev (DATABASE_URL="file:./dev.db")
-// Use "postgresql" for production (DATABASE_URL="postgresql://user:pass@host:5432/dbname")
+// Use postgresUrl in .env (e.g. postgresql://user:pass@host:5432/dbname?sslmode=require)
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("postgresUrl")
 }
 
 model Admin {
@@ -14,6 +13,7 @@ model Admin {
   username     String   @unique
   passwordHash String  @map("password_hash")
   createdAt    DateTime @default(now()) @map("created_at")
+  @@map("admin")
 }
 
 model Product {
@@ -28,6 +28,7 @@ model Product {
   createdAt        DateTime @default(now()) @map("created_at")
   updatedAt        DateTime @updatedAt @map("updated_at")
   saleItems        SaleItem[]
+  @@map("product")
 }
 
 model Sale {
@@ -37,6 +38,7 @@ model Sale {
   notes       String?
   createdAt   DateTime   @default(now()) @map("created_at")
   items       SaleItem[]
+  @@map("sale")
 }
 
 model SaleItem {
