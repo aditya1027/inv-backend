@@ -5,7 +5,7 @@ generator client {
 // Use postgresUrl in .env (e.g. postgresql://user:pass@host:5432/dbname?sslmode=require)
 datasource db {
   provider = "postgresql"
-  url      = env("postgresUrl")
+  url      = env("DATABASE_URL")
 }
 
 model Admin {
