@@ -1,0 +1,35 @@
+# Creates/updates DB tables when you push to main (no need to run from your machine).
+# Add DATABASE_URL as a repo secret: Settings → Secrets and variables → Actions.
+name: DB deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/prisma/schema.prisma'
+  workflow_dispatch: # Run manually from Actions tab
+
+jobs:
+  deploy-db:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install and push schema
+        working-directory: backend
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          npm install
+          npx prisma db push
+
+      - name: Seed (optional - creates default admin)
+        working-directory: backend
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: npm run db:seed
+        continue-on-error: true
